@@ -21,7 +21,7 @@ export default class Camera{
       );
       this.camera.setTarget(new Vector3(0,0.9,0));
       this.camera.upperRadiusLimit = 8;
-      this.camera.lowerRadiusLimit = 2;
+      //this.camera.lowerRadiusLimit = 2;
       this.camera.alpha = 1.56;
       this.camera.beta = 1.44;
       this.camera.radius = 2.5;
