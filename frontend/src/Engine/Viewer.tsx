@@ -82,6 +82,7 @@ class Viewer {
       const meshes = await this.modelLoader.loadModel(this.scene, modelPath);
       console.log("Modelo cargado:", meshes);
       //@ts-ignore para depuración
+      
       window.scene = this.scene;
     } catch (error) {
       console.error("Error al cargar el modelo:", error);

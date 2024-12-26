@@ -1,9 +1,9 @@
 import React, { useEffect, useRef } from "react";
-import Viewer from "./../Engine/Viewer.tsx"; // Asegúrate de que esta ruta sea correcta
+import Viewer from "./../Engine/Viewer.tsx"; 
 
 const ThreeDViewComponent: React.FC = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const viewerRef = useRef<Viewer | null>(null); // useRef para almacenar la instancia de Viewer
+  const viewerRef = useRef<Viewer | null>(null); 
 
   useEffect(() => {
     if (canvasRef.current) {
@@ -18,7 +18,7 @@ const ThreeDViewComponent: React.FC = () => {
         viewerRef.current = null;
       }
     };
-  }, []); // Dependencias vacías: el efecto se ejecuta solo al montar/desmontar
+  }, []);
 
   return (
     <canvas
