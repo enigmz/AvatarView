@@ -1,69 +1,86 @@
-import { MorphTarget } from "@babylonjs/core";
+import { Scene, AbstractMesh, MorphTarget } from "@babylonjs/core";
 
-type MorphTargetGroup = {
-    name: string; // Nombre del grupo
-    targets: MorphTarget[]; // Lista de morph targets asociados
-  };
-  
-  /*type AnimationState = {
-    group: MorphTargetGroup; // Grupo de morph targets
-    duration: number; // Duración de la animación en milisegundos
-    loop: boolean; // Si la animación debe repetirse
-  };*/
-  
-  class MorphTargetStateMachine {
-    private groups: MorphTargetGroup[] = [];
-    private currentAnimation: number | null = null; // Índice de la animación activa
-    private isAnimating = false;
-  
-    // Agregar un grupo de morph targets
-    addGroup(name: string, targets: MorphTarget[]) {
-      this.groups.push({ name, targets });
-    }
-  
-    // Ejecutar una animación
-    async animateGroup(name: string, duration: number, loop = false) {
-      const group = this.groups.find((g) => g.name === name);
-  
-      if (!group) {
-        console.error(`No se encontró el grupo de morph targets con el nombre: ${name}`);
-        return;
+type MorphTargetAnimation = {
+  name: string; // Nombre del grupo de morph targets
+  timing: number; // Duración de la animación en milisegundos
+};
+
+class MorphTargetStateMachine {
+  private scene: Scene;
+  private model: AbstractMesh;
+  private morphGroups: Record<string, MorphTarget[]> = {};
+  private animations: MorphTargetAnimation[] = [];
+  private isRunning = false;
+
+  constructor(scene: Scene, model: AbstractMesh) {
+    this.scene = scene;
+    this.model = model;
+
+    // Agrupar los morph targets por nombre
+    this.initializeMorphGroups();
+  }
+
+  private initializeMorphGroups() {
+    this.model.getChildMeshes().forEach((mesh) => {
+      if (mesh.morphTargetManager) {
+        const manager = mesh.morphTargetManager;
+
+        for (let i = 0; i < manager.numTargets; i++) {
+          const morphTarget = manager.getTarget(i);
+          if (morphTarget) {
+            if (!this.morphGroups[morphTarget.name]) {
+              this.morphGroups[morphTarget.name] = [];
+            }
+            this.morphGroups[morphTarget.name].push(morphTarget);
+          }
+        }
       }
-  
-      this.isAnimating = true;
-      this.currentAnimation = this.groups.indexOf(group);
-  
-      do {
-        // Animar de 0 a 1
-        await this.interpolate(group.targets, 0, 1, duration / 2);
-        // Animar de 1 a 0
-        await this.interpolate(group.targets, 1, 0, duration / 2);
-      } while (loop && this.isAnimating);
-  
-      this.isAnimating = false;
-      this.currentAnimation = null;
+    });
+  }
+
+  // Añadir una nueva animación a la máquina de estados
+  push(animation: MorphTargetAnimation) {
+    if (!this.morphGroups[animation.name]) {
+      console.warn(`El grupo de morph targets con el nombre "${animation.name}" no existe.`);
+      return;
+    }
+    this.animations.push(animation);
+  }
+
+  // Iniciar la ejecución aleatoria de animaciones
+  start() {
+    if (this.isRunning) return;
+    this.isRunning = true;
+    this.executeRandomAnimation();
+  }
+
+  // Detener la ejecución de animaciones
+  stop() {
+    this.isRunning = false;
+  }
+
+  // Ejecutar una animación específica
+  private async animateGroup(name: string, timing: number) {
+    const targets = this.morphGroups[name];
+    if (!targets) {
+      console.warn(`El grupo de morph targets con el nombre "${name}" no existe.`);
+      return;
     }
   
-    // Detener la animación actual
-    stopAnimation() {
-      this.isAnimating = false;
-      this.currentAnimation = null;
-    }
-  
-    // Interpolar los valores de los morph targets
-    private async interpolate(targets: MorphTarget[], from: number, to: number, duration: number) {
+    // Función para realizar la interpolación
+    const animate = (from: number, to: number, duration: number) => {
       return new Promise<void>((resolve) => {
         const startTime = performance.now();
+  
         const step = () => {
           const elapsed = performance.now() - startTime;
-          const progress = Math.min(elapsed / duration, 1);
-          const value = from + (to - from) * progress;
+          const progress = Math.min(elapsed / duration, 1); // Normaliza el progreso entre 0 y 1
+          const influence = from + (to - from) * progress; // Calcula la influencia actual
   
-          targets.forEach((target) => {
-            target.influence = value;
-          });
+          // Actualiza la influencia de los morph targets
+          targets.forEach((target) => (target.influence = influence));
   
-          if (progress < 1 && this.isAnimating) {
+          if (progress < 1) {
             requestAnimationFrame(step);
           } else {
             resolve();
@@ -71,7 +88,29 @@ type MorphTargetGroup = {
         };
         step();
       });
-    }
+    };
+  
+    // Animar de 0 a 1 y luego de 1 a 0
+    await animate(0, 1, timing / 2);
+    await animate(1, 0, timing / 2);
   }
   
-  export default MorphTargetStateMachine;
+
+  // Ejecutar una animación aleatoria
+  private async executeRandomAnimation() {
+    while (this.isRunning) {
+      const randomIndex = Math.floor(Math.random() * this.animations.length);
+      const animation = this.animations[randomIndex];
+
+      if (animation) {
+        await this.animateGroup(animation.name, animation.timing);
+      }
+
+      // Pausa aleatoria entre animaciones
+      const randomDelay = Math.random() * 2000 + 500; // Entre 500ms y 2500ms
+      await new Promise((resolve) => setTimeout(resolve, randomDelay));
+    }
+  }
+}
+
+export default MorphTargetStateMachine;

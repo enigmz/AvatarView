@@ -1,18 +1,18 @@
 import React, { useEffect, useRef } from "react";
-import Viewer from "./../Engine/Viewer.tsx"; 
+import Viewer from "./../Engine/Viewer.tsx";
 
 const ThreeDViewComponent: React.FC = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const viewerRef = useRef<Viewer | null>(null); 
+  const viewerRef = useRef<Viewer | null>(null);
+  const initializedRef = useRef(false); // Bandera para evitar doble inicialización
 
   useEffect(() => {
-    if (canvasRef.current) {
-      // Crear una nueva instancia de Viewer y almacenarla en viewerRef
+    if (!initializedRef.current && canvasRef.current) {
       viewerRef.current = new Viewer(canvasRef.current);
+      initializedRef.current = true; // Marcar como inicializado
     }
 
     return () => {
-      // Limpiar la instancia de Viewer al desmontar el componente
       if (viewerRef.current) {
         viewerRef.current.dispose();
         viewerRef.current = null;

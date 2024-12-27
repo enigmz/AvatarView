@@ -37,8 +37,11 @@ class AnimationUI {
 
       // Botón de reproducir/pausar
       const playPauseButton = document.createElement("button");
-      playPauseButton.innerText = "Reproducir";
       playPauseButton.style.marginRight = "5px";
+
+      // Sincronizar el estado inicial del botón
+      playPauseButton.innerText = animationGroup.isPlaying ? "Pausar" : "Reproducir";
+
       playPauseButton.onclick = () => {
         if (animationGroup.isPlaying) {
           animationGroup.pause();
@@ -46,6 +49,9 @@ class AnimationUI {
         } else {
           animationGroup.play(true); // Reproducir en bucle
           playPauseButton.innerText = "Pausar";
+
+          // Actualizar el slider mientras la animación está en ejecución
+          this.trackAnimationProgress(animationGroup, slider);
         }
       };
 
@@ -55,25 +61,15 @@ class AnimationUI {
       slider.min = "0";
       slider.max = "1";
       slider.step = "0.01";
-      slider.value = "0";
       slider.style.width = "100%";
+
       slider.oninput = (event: Event) => {
         const value = parseFloat((event.target as HTMLInputElement).value);
         animationGroup.goToFrame(animationGroup.to * value);
       };
 
-      // Actualizar el slider mientras la animación se reproduce
-      animationGroup.onAnimationGroupPlayObservable.add(() => {
-        const interval = setInterval(() => {
-          if (!animationGroup.isPlaying) {
-            clearInterval(interval);
-          } else {
-            const progress = animationGroup.targetedAnimations[0].animation.runtimeAnimations[0].currentFrame /
-              animationGroup.to;
-            slider.value = progress.toString();
-          }
-        }, 100);
-      });
+      // Sincronizar el slider al cargar
+      this.syncSlider(animationGroup, slider);
 
       // Agregar controles al contenedor
       wrapper.appendChild(label);
@@ -81,6 +77,27 @@ class AnimationUI {
       wrapper.appendChild(slider);
       this.container.appendChild(wrapper);
     });
+  }
+
+  private syncSlider(animationGroup: AnimationGroup, slider: HTMLInputElement) {
+    if (animationGroup.targetedAnimations.length > 0) {
+      const currentAnimation = animationGroup.targetedAnimations[0].animation.runtimeAnimations[0];
+      if (currentAnimation) {
+        const currentFrame = currentAnimation.currentFrame;
+        slider.value = (currentFrame / animationGroup.to).toString();
+      }
+    }
+  }
+
+  private trackAnimationProgress(animationGroup: AnimationGroup, slider: HTMLInputElement) {
+    const updateSlider = () => {
+      if (!animationGroup.isPlaying) return; // Detener el seguimiento si la animación se detiene
+
+      this.syncSlider(animationGroup, slider);
+      requestAnimationFrame(updateSlider); // Continuar el seguimiento
+    };
+
+    requestAnimationFrame(updateSlider);
   }
 }
 

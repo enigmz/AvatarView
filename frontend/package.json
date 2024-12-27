@@ -5,6 +5,7 @@
   "dependencies": {
     "@babylonjs/core": "^7.41.1",
     "@babylonjs/gui": "^7.41.1",
+    "@babylonjs/inspector": "^7.42.0",
     "@babylonjs/loaders": "^7.41.1",
     "cra-template-typescript": "1.2.0",
     "react": "^19.0.0",

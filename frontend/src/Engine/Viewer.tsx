@@ -1,16 +1,21 @@
 import { Engine, Scene, Color3 } from "@babylonjs/core";
 import "@babylonjs/loaders"; // Importa el soporte para cargar archivos GLB/GLTF
 import Lights from "./Lights/Lights.tsx";
+import LightUI from "./UIs/LightsUI.tsx";
 import Camera from "./Camera/Camera.tsx";
 import LoadingScreen from "./Helpers/LoadingScreen.tsx";
 import ModelLoader from "./Model/ModelLoader.tsx";
+//import SceneOptimizerHelper from './Optimizer/Optimizer.tsx';
 
 class Viewer {
   canvas: HTMLCanvasElement;
-  engine: Engine;
-  scene: Scene;
+  private engine: Engine;
+  private scene: Scene;
   private loadingScreen: LoadingScreen;
   private modelLoader: ModelLoader;
+  private lights: Lights;
+  private lightsUI: LightUI;
+
 
   constructor(canvas: HTMLCanvasElement) {
     this.canvas = canvas;
@@ -25,13 +30,22 @@ class Viewer {
 
     // Crear cámara y luces
     new Camera(this.scene, this.canvas);
-    new Lights(this.scene);
+    this.lights = new Lights(this.scene);
+    // Crear la interfaz para controlar la luz
+    this.lightsUI = new LightUI(this.scene, this.lights);
 
     // Crear entorno
     this.createEnvironment();
 
     // Cargar el modelo GLB
     this.loadModel("/models/avatar.glb");
+
+    // Crear una instancia de la clase de optimización
+    //const optimizer = new SceneOptimizerHelper(this.scene);
+    // Aplicar optimizaciones
+    //optimizer.applyDynamicOptimization(60); // Optimización dinámica
+    //optimizer.enableDefaultRenderingPipeline(this.engine); // Pipeline predeterminado
+    //optimizer.optimizeLighting(); // Optimización de luces
 
     // Iniciar el bucle de renderizado
     this.engine.runRenderLoop(() => {
@@ -81,8 +95,9 @@ class Viewer {
     try {
       const meshes = await this.modelLoader.loadModel(this.scene, modelPath);
       console.log("Modelo cargado:", meshes);
+      this.lightsUI.showLightUI();
+
       //@ts-ignore para depuración
-      
       window.scene = this.scene;
     } catch (error) {
       console.error("Error al cargar el modelo:", error);
