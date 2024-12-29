@@ -5,7 +5,7 @@ export default class LightUI {
   private container: HTMLElement;
 
   constructor(scene: Scene, lights: Lights) {
-    // Creamos un contenedor para el color picker
+    // Creamos un contenedor para los controles de la luz
     this.container = document.createElement("div");
     this.container.id = "light-ui";
     this.container.style.position = "absolute";
@@ -22,18 +22,23 @@ export default class LightUI {
 
     document.body.appendChild(this.container);
 
-    // Creamos el color picker
-    const colorPickerLabel = document.createElement("label");
-    colorPickerLabel.innerText = "Color de la Luz:";
-    colorPickerLabel.style.display = "block";
-    colorPickerLabel.style.marginBottom = "5px";
+    // Crear controles
+    this.createColorPicker(lights);
+    this.createIntensitySlider(lights);
+  }
+
+  // Método para crear el color picker
+  private createColorPicker(lights: Lights) {
+    const label = document.createElement("label");
+    label.innerText = "Color de la Luz:";
+    label.style.display = "block";
+    label.style.marginBottom = "5px";
 
     const colorPicker = document.createElement("input");
     colorPicker.type = "color";
     colorPicker.style.width = "100%";
     colorPicker.style.marginBottom = "10px";
 
-    // Evento para cambiar el color de la luz
     colorPicker.oninput = (event: Event) => {
       const colorValue = (event.target as HTMLInputElement).value;
       const rgb = this.hexToRgb(colorValue);
@@ -43,8 +48,32 @@ export default class LightUI {
       }
     };
 
-    this.container.appendChild(colorPickerLabel);
+    this.container.appendChild(label);
     this.container.appendChild(colorPicker);
+  }
+
+  // Método para crear el slider de intensidad
+  private createIntensitySlider(lights: Lights) {
+    const label = document.createElement("label");
+    label.innerText = "Intensidad de la Luz:";
+    label.style.display = "block";
+    label.style.marginBottom = "5px";
+
+    const intensitySlider = document.createElement("input");
+    intensitySlider.type = "range";
+    intensitySlider.min = "0";
+    intensitySlider.max = "2"; // Aumentar si deseas un rango mayor
+    intensitySlider.step = "0.1";
+    intensitySlider.value = "1"; // Valor inicial
+    intensitySlider.style.width = "100%";
+
+    intensitySlider.oninput = (event: Event) => {
+      const value = parseFloat((event.target as HTMLInputElement).value);
+      lights.setLightIntensity(value);
+    };
+
+    this.container.appendChild(label);
+    this.container.appendChild(intensitySlider);
   }
 
   // Método para convertir un color HEX a RGB
@@ -61,7 +90,7 @@ export default class LightUI {
       : null;
   }
 
-  public showLightUI(){
+  public showLightUI() {
     this.container.style.display = "block";
   }
 }

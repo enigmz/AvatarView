@@ -30,7 +30,7 @@ export default class Camera{
       this.camera.inertia = 0.9; // Reduce el tiempo de desaceleración
       //this.camera.angularSensibilityX = 2000; // Más alto significa rotación más lenta
       //this.camera.angularSensibilityY = 2000;
-      this.camera.minZ = 0.1;
+      this.camera.minZ = 0.01;
       this.camera.attachControl(this.canvas, true);
     }
 }
