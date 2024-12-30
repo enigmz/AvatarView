@@ -7,17 +7,6 @@ class MorphTargetUI {
     // Crear un contenedor para los sliders
     this.container = document.createElement("div");
     this.container.id = "morph-target-ui";
-    this.container.style.position = "absolute";
-    this.container.style.top = "10px";
-    this.container.style.right = "10px";
-    this.container.style.padding = "10px";
-    this.container.style.backgroundColor = "rgba(0, 0, 0, 0.7)";
-    this.container.style.color = "white";
-    this.container.style.borderRadius = "8px";
-    this.container.style.zIndex = "2";
-    this.container.style.height = "95vh";
-    this.container.style.overflowY = "auto";
-    this.container.style.boxSizing = "border-box";
 
     document.body.appendChild(this.container);
 

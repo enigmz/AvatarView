@@ -5,20 +5,9 @@ export default class LightUI {
   private container: HTMLElement;
 
   constructor(scene: Scene, lights: Lights) {
-    // Creamos un contenedor para los controles de la luz
+    // Crear contenedor para los controles de luz
     this.container = document.createElement("div");
     this.container.id = "light-ui";
-    this.container.style.position = "absolute";
-    this.container.style.top = "16%";
-    this.container.style.left = "10px";
-    this.container.style.padding = "10px";
-    this.container.style.backgroundColor = "rgba(0, 0, 0, 0.7)";
-    this.container.style.color = "white";
-    this.container.style.borderRadius = "8px";
-    this.container.style.zIndex = "1000";
-    this.container.style.maxHeight = "300px";
-    this.container.style.overflowY = "auto";
-    this.container.style.display = "none";
 
     document.body.appendChild(this.container);
 
@@ -31,13 +20,9 @@ export default class LightUI {
   private createColorPicker(lights: Lights) {
     const label = document.createElement("label");
     label.innerText = "Color de la Luz:";
-    label.style.display = "block";
-    label.style.marginBottom = "5px";
 
     const colorPicker = document.createElement("input");
     colorPicker.type = "color";
-    colorPicker.style.width = "100%";
-    colorPicker.style.marginBottom = "10px";
 
     colorPicker.oninput = (event: Event) => {
       const colorValue = (event.target as HTMLInputElement).value;
@@ -56,16 +41,13 @@ export default class LightUI {
   private createIntensitySlider(lights: Lights) {
     const label = document.createElement("label");
     label.innerText = "Intensidad de la Luz:";
-    label.style.display = "block";
-    label.style.marginBottom = "5px";
 
     const intensitySlider = document.createElement("input");
     intensitySlider.type = "range";
     intensitySlider.min = "0";
-    intensitySlider.max = "2"; // Aumentar si deseas un rango mayor
+    intensitySlider.max = "2"; // Ajusta el rango según sea necesario
     intensitySlider.step = "0.1";
-    intensitySlider.value = "1"; // Valor inicial
-    intensitySlider.style.width = "100%";
+    intensitySlider.value = "1";
 
     intensitySlider.oninput = (event: Event) => {
       const value = parseFloat((event.target as HTMLInputElement).value);

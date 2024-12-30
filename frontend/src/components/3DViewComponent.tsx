@@ -1,5 +1,6 @@
 import React, { useEffect, useRef } from "react";
 import Viewer from "./../Engine/Viewer.tsx";
+import './3DViewComponent.scss';
 
 const ThreeDViewComponent: React.FC = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
