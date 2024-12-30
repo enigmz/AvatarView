@@ -9,6 +9,7 @@ import LoadingScreen from "./Helpers/LoadingScreen.tsx";
 import ModelLoader from "./Model/ModelLoader.tsx";
 import EyesMaterial from "./Materials/EyesMaterial.tsx";
 import SceneOptimizerHelper from "./Optimizer/Optimizer.tsx";
+import {isIos} from './Helpers/HelperTools.tsx';
 
 class Viewer {
   canvas: HTMLCanvasElement;
@@ -33,7 +34,14 @@ class Viewer {
 
 
     // Inicializar el motor y la escena
-    this.engine = new Engine(this.canvas, true);
+    if(isIos()){
+      this.engine = new Engine(canvas, true, { disableWebGL2Support: true });
+
+    }else{
+      this.engine = new Engine(this.canvas, true);
+    }
+
+
     this.scene = new Scene(this.engine);
 
     // Crear cámara y luces
