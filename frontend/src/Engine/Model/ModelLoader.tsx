@@ -3,16 +3,21 @@ import LoadingScreen from "../Helpers/LoadingScreen.tsx";
 import MorphTargetUI from "../UIs/MorphTargetUI.tsx";
 import AnimationUI from "../UIs/AnimationsUI.tsx";
 import MorphTargetStateMachine from "../Animations/StateMachines/MorphStateMachine.tsx";
+import GeneralUI from "../UIs/GeneralUI.tsx";
+
 //import HeadTracking from "../Skeleton/HeadTracking.tsx";
 import "@babylonjs/inspector";
 //import createBoneWeightShaderMaterial from '../Shaders/BoneWeightCustomMaterial.tsx';
 
 class ModelLoader {
   private loadingScreen: LoadingScreen;
+  private generalUI: GeneralUI;
+  private morphTargetUI: MorphTargetUI;
+  private animationUI: AnimationUI;
 
-
-  constructor(loadingScreen: LoadingScreen) {
+  constructor(loadingScreen: LoadingScreen,generalUI: GeneralUI) {
     this.loadingScreen = loadingScreen;
+    this.generalUI = generalUI;
 
   }
 
@@ -55,8 +60,10 @@ class ModelLoader {
                         //}
 
                         // Crear la UI de morph targets
-                        new MorphTargetUI(scene, mainMesh);
+                        this.morphTargetUI = new MorphTargetUI(scene, mainMesh);
+                        this.generalUI.registerUIElement(this.morphTargetUI.getContainer());
                         const morphStateMachine = new MorphTargetStateMachine(scene, mainMesh);
+                        
 
                         // Añadimos animaciones de morph targets
                         morphStateMachine.push({ name: "blink", timing: 100 });
@@ -65,7 +72,8 @@ class ModelLoader {
 
                     // Configuración de la UI de animaciones si existen animaciones
                     if (animationGroups.length > 0) {
-                        new AnimationUI(scene, animationGroups);
+                        this.animationUI = new AnimationUI(scene, animationGroups);
+                        this.generalUI.registerUIElement(this.animationUI.getContainer());
                     }
 
                     // Ocultar pantalla de carga y mostrar DebugLayer

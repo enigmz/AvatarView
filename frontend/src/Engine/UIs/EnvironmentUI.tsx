@@ -55,6 +55,10 @@ class EnvironmentUI {
   public showEnvironmentUI() {
     this.container.style.display = "block";
   }
+  public getContainer(): HTMLElement {
+    return this.container;
+  }
+  
 }
 
 export default EnvironmentUI;

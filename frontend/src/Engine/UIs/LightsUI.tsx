@@ -75,4 +75,9 @@ export default class LightUI {
   public showLightUI() {
     this.container.style.display = "block";
   }
+
+  public getContainer(): HTMLElement {
+    return this.container;
+  }
+  
 }

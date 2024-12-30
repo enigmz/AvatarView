@@ -57,9 +57,22 @@
     }
 
     #light-ui {
-    top: 29%;
+        top: 29%;
     }
 
     #environment-ui {
         top: 15%;
+    }
+
+    #toggle-ui-button{
+        position: absolute;
+        bottom: 10px;
+        left: 10px;
+        z-index: 1000;
+        padding: 10px;
+        background-color: #444;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
     }

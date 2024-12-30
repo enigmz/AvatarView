@@ -119,6 +119,11 @@ class MorphTargetUI {
 
     step();
   }
+
+  public getContainer(): HTMLElement {
+    return this.container;
+  }
+  
 }
 
 export default MorphTargetUI;
