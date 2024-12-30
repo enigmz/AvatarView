@@ -1,5 +1,5 @@
 import { Scene, AbstractMesh, SceneLoader  } from "@babylonjs/core";
-import LoadingScreen from "../Helpers/LoadingScreen.tsx";
+import LoadingScreen from "../UIs/LoadingScreen.tsx";
 import MorphTargetUI from "../UIs/MorphTargetUI.tsx";
 import AnimationUI from "../UIs/AnimationsUI.tsx";
 import MorphTargetStateMachine from "../Animations/StateMachines/MorphStateMachine.tsx";

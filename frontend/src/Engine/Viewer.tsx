@@ -5,7 +5,7 @@ import GeneralUI from "./UIs/GeneralUI.tsx";
 import LightUI from "./UIs/LightsUI.tsx";
 import EnvironmentUI from "./UIs/EnvironmentUI.tsx";
 import Camera from "./Camera/Camera.tsx";
-import LoadingScreen from "./Helpers/LoadingScreen.tsx";
+import LoadingScreen from "./UIs/LoadingScreen.tsx";
 import ModelLoader from "./Model/ModelLoader.tsx";
 import EyesMaterial from "./Materials/EyesMaterial.tsx";
 import SceneOptimizerHelper from "./Optimizer/Optimizer.tsx";
