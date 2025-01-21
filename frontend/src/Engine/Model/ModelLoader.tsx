@@ -66,7 +66,7 @@ class ModelLoader {
                         
 
                         // Añadimos animaciones de morph targets
-                        morphStateMachine.push({ name: "blink", timing: 100 });
+                        morphStateMachine.push({ name: "Eyes_Blink", timing: 100 });
                         morphStateMachine.start();
                     }
 

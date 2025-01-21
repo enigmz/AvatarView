@@ -3,10 +3,11 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@babylonjs/core": "^7.41.1",
+    "@babylonjs/core": "^7.44.0",
     "@babylonjs/gui": "^7.41.1",
     "@babylonjs/inspector": "^7.42.0",
     "@babylonjs/loaders": "^7.41.1",
+    "@babylonjs/materials": "^7.44.0",
     "cra-template-typescript": "1.2.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",

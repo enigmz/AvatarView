@@ -3,6 +3,7 @@ import Lights from "../Lights/Lights.tsx";
 
 export default class LightUI {
   private container: HTMLElement;
+  private selectedLightIndex: number = 0;
 
   constructor(scene: Scene, lights: Lights) {
     // Crear contenedor para los controles de luz
@@ -11,9 +12,35 @@ export default class LightUI {
 
     document.body.appendChild(this.container);
 
+    // Crear selector de luz
+    this.createLightSelector(lights);
+
     // Crear controles
     this.createColorPicker(lights);
     this.createIntensitySlider(lights);
+  }
+
+  // Crear un selector de luz
+  private createLightSelector(lights: Lights) {
+    const label = document.createElement("label");
+    label.innerText = "Seleccionar Luz:";
+
+    const selector = document.createElement("select");
+    const lightsList = lights.getLights();
+
+    lightsList.forEach((_, index) => {
+      const option = document.createElement("option");
+      option.value = index.toString();
+      option.innerText = `Luz ${index + 1}`;
+      selector.appendChild(option);
+    });
+
+    selector.onchange = (event: Event) => {
+      this.selectedLightIndex = parseInt((event.target as HTMLSelectElement).value, 10);
+    };
+
+    this.container.appendChild(label);
+    this.container.appendChild(selector);
   }
 
   // Método para crear el color picker
@@ -29,7 +56,7 @@ export default class LightUI {
       const rgb = this.hexToRgb(colorValue);
       if (rgb) {
         const color = new Color3(rgb.r / 255, rgb.g / 255, rgb.b / 255);
-        lights.setLightColor(color);
+        lights.setLightColor(this.selectedLightIndex, color);
       }
     };
 
@@ -45,13 +72,13 @@ export default class LightUI {
     const intensitySlider = document.createElement("input");
     intensitySlider.type = "range";
     intensitySlider.min = "0";
-    intensitySlider.max = "2"; // Ajusta el rango según sea necesario
+    intensitySlider.max = "2";
     intensitySlider.step = "0.1";
     intensitySlider.value = "1";
 
     intensitySlider.oninput = (event: Event) => {
       const value = parseFloat((event.target as HTMLInputElement).value);
-      lights.setLightIntensity(value);
+      lights.setLightIntensity(this.selectedLightIndex, value);
     };
 
     this.container.appendChild(label);
@@ -79,5 +106,4 @@ export default class LightUI {
   public getContainer(): HTMLElement {
     return this.container;
   }
-  
 }

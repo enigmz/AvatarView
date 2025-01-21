@@ -10,6 +10,7 @@ import ModelLoader from "./Model/ModelLoader.tsx";
 import EyesMaterial from "./Materials/EyesMaterial.tsx";
 import SceneOptimizerHelper from "./Optimizer/Optimizer.tsx";
 import {isIos} from './Helpers/HelperTools.tsx';
+import HairMaterial from "./Materials/HairMaterial.tsx";
 
 class Viewer {
   canvas: HTMLCanvasElement;
@@ -56,7 +57,7 @@ class Viewer {
     this.createEnvironment();
 
     // Cargar el modelo GLB
-    this.loadModel("/models/avatar.glb");
+    this.loadModel("/models/Rose.glb");
 
     // Crear una instancia de la clase de optimización
     const optimizer = new SceneOptimizerHelper(this.scene);
@@ -101,7 +102,10 @@ class Viewer {
         helper.groundMirror.renderList = [];
       }
     }
-
+    this.scene.environmentIntensity = 0.5;
+    this.scene.imageProcessingConfiguration.contrast = 1.5;
+    this.scene.imageProcessingConfiguration.exposure = 1.2;
+  
     return helper;
   }
 
@@ -110,14 +114,26 @@ class Viewer {
       const meshes = await this.modelLoader.loadModel(this.scene, modelPath);
 
       const eyesMaterial = new EyesMaterial(this.scene);
+      const hairMaterial = new HairMaterial(this.scene);
+
+      const shadowMeshes: Mesh[] = [];
+
       meshes.forEach((mesh) => {
         if (mesh instanceof Mesh) {
-          if (mesh.name.includes("Eye")) {
+          console.log(mesh.name);
+          if (mesh.name.includes("Rose_FaceMesh.001")) {
             eyesMaterial.applyToMesh(mesh);
           }
+
+          if (mesh.name.includes("Hair")) {
+            hairMaterial.applyToMesh(mesh);
+          }
+          shadowMeshes.push(mesh);
         }
       });
 
+    // Habilitar sombras en las mallas cargadas
+    this.lights.enableShadows(shadowMeshes);
       this.lightsUI.showLightUI();
       if (this.environmentUI) {
         this.environmentUI.showEnvironmentUI();
